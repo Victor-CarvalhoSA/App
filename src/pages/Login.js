@@ -6,10 +6,11 @@ import api from '../services/api';
 
 import logo from '../../assets/logo-faccar.png';
 
-export default function Login(){
+export default function Login({ navigation }){
     
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const [id, setID] = useState('');
   
     console.log(email);
     console.log(senha);
@@ -23,11 +24,15 @@ export default function Login(){
                                     "senha": senha
                                 });
    
-                                const {_id} = response.data.users._id;
-                                console.log(response.data);
+                                const {_id} = response.data.users;
+                                //console.log(response.data);
                                 
-        if(_id){
+        if(_id != null){
+            await AsyncStorage.setItem('email', email);
+            await AsyncStorage.setItem('id', _id);
             navigation.navigate('Index')
+        } else {
+
         }
         
     }

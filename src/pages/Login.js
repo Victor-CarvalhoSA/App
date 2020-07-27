@@ -1,40 +1,44 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
-import {View, Image, Text, TextInput, StyleSheet,TouchableOpacity, AsyncStorage} from 'react-native'
+import {View, Image, Text, TextInput, StyleSheet,TouchableOpacity, AsyncStorage,Alert} from 'react-native'
 
 import api from '../services/api';
 
 import logo from '../../assets/logo-faccar.png';
 
-export default function Login({ navigation }){
+export default function Login( { navigation } ){
     
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
-    const [id, setID] = useState('');
+    const [id   , setId] = useState('');
+    
+    useEffect(() =>{
+        AsyncStorage.getItem('_id').then( id => {
+            if(id){
+               setId(id);
+               navigation.navigate('Index'); 
+            }
+        })
+    },[]);
   
-    console.log(email);
-    console.log(senha);
+    console.log(email,senha);
 
     async function handleSubmit(){
-        console.log('Solicitando');
+        console.log('solicitando');
         
-        //email e senha
-        const response = await api.post('/users/login',{
-                                    "email": email ,
-                                    "senha": senha
-                                });
-   
-                                const {_id} = response.data.users;
-                                //console.log(response.data);
-                                
-        if(_id != null){
-            await AsyncStorage.setItem('email', email);
-            await AsyncStorage.setItem('id', _id);
-            navigation.navigate('Index')
-        } else {
-
-        }
-        
+        // //email e senha
+         const response = await api.post('/users/login',{
+             "email" : email,
+             "senha" : senha
+            });
+            
+          const { _id }  = response.data.users;
+          console.log(_id);
+        //  const email = response.data.users.email;
+         if(_id != null){
+            await AsyncStorage.setItem('_id' , _id);
+             navigation.navigate('Index');
+         }
     }
 
     return ( 
@@ -80,7 +84,8 @@ const style = StyleSheet.create({
     container :{
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: "#FFF",
     },
     logo: {
         resizeMode: 'contain',
